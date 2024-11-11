@@ -1,11 +1,12 @@
-import openai
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS  # Asegúrate de importar esto
 
-openai.api_key = "sk-proj-c3V6jLr8MltEyY3TdHfIT3BlbkFJqsrUf6TaKuwBrafWaFjS"  # Asegúrate de usar tu clave de API aquí
+import openai
+
+openai.api_key = "sk-proj-c3V6jLr8MltEyY3TdHfIT3BlbkFJqsrUf6TaKuwBrafWaFjS"  # Coloca tu clave de API aquí
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Esto aplica CORS globalmente
 
 @app.route('/ask', methods=['POST'])
 def ask():
@@ -25,4 +26,4 @@ def ask():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)  # Cambié esto para asegurarte de que Flask escuche en todos los puertos
