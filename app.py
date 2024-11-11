@@ -18,7 +18,7 @@ def get_response():
     try:
         # Llamada a la API de OpenAI
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_input}]
         )
         answer = response.choices[0].message.content.strip()
@@ -29,6 +29,6 @@ def get_response():
 
 if __name__ == '__main__':
     # Usar el puerto asignado por Render
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
 
