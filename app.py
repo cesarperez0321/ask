@@ -15,19 +15,20 @@ def home():
 def get_response():
     user_input = request.form['user_input']
     
-    # Llamada a la API de OpenAI
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # Puedes cambiar el modelo si lo deseas
-        messages=[{"role": "user", "content": user_input}]
-    )
+    try:
+        # Llamada a la API de OpenAI
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": user_input}]
+        )
+        answer = response.choices[0].message.content.strip()
+    except Exception as e:
+        answer = "Ocurrió un error al comunicarse con OpenAI: {}".format(e)
     
-    answer = response.choices[0].message.content.strip()
     return render_template('index.html', user_input=user_input, bot_response=answer)
 
 if __name__ == '__main__':
     # Usar el puerto asignado por Render
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-
 
