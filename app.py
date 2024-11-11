@@ -1,36 +1,33 @@
+from flask import Flask, render_template, request
 import openai
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 
-# Tu clave API de OpenAI
-openai.api_key = "sk-proj-c3V6jLr8MltEyY3TdHfIT3BlbkFJqsrUf6TaKuwBrafWaFjS"  # Reemplaza con tu clave de API real
-
 app = Flask(__name__)
-CORS(app)
 
-@app.route('/ask', methods=['POST'])
-def ask():
-    user_question = request.json.get("question")
-    if not user_question:
-        return jsonify({"error": "No question provided"}), 400
+# Configura tu clave de API de OpenAI desde una variable de entorno
+openai.api_key = os.environ.get("sk-proj-c3V6jLr8MltEyY3TdHfIT3BlbkFJqsrUf6TaKuwBrafWaFjS")
 
-    try:
-        # Haciendo la llamada correcta para openai>=1.0.0
-        response = openai.Completion.create(
-            model="gpt-4",  # O "gpt-4" si tienes acceso
-            prompt=user_question,
-            max_tokens=150
-        )
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-        # Extraer la respuesta
-        answer = response['choices'][0]['text'].strip()
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    user_input = request.form['user_input']
+    
+    # Llamada a la API de OpenAI
+    response = openai.ChatCompletion.create(
+        model="gpt-4",  # Puedes cambiar el modelo si lo deseas
+        messages=[{"role": "user", "content": user_input}]
+    )
+    
+    answer = response.choices[0].message.content.strip()
+    return render_template('index.html', user_input=user_input, bot_response=answer)
 
-        return jsonify({"answer": answer})
+if __name__ == '__main__':
+    # Usar el puerto asignado por Render
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+
